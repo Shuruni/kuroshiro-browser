@@ -1,0 +1,18 @@
+{
+  "name": "kuroshiro-browser",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "async": "^3.2.5",
+    "doublearray": "0.0.2"
+  },
+  "devDependencies": {
+    "vite": "^5.2.9"
+  }
+}
