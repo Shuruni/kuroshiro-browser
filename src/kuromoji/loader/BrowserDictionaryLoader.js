@@ -1,4 +1,3 @@
-// import { gunzipSync } from "fflate";
 import DictionaryLoader from "./DictionaryLoader.js";
 
 /*
@@ -33,19 +32,56 @@ class BrowserDictionaryLoader extends DictionaryLoader {
      * @param {BrowserDictionaryLoader~onLoad} callback Callback function
      */
     loadArrayBuffer(url, callback) {
-        fetch(url).then(function (response) {
+        fetch(url).then((response) => {
             if (!response.ok) {
                 callback(response.statusText, null);
             }
-            response.arrayBuffer().then(function (arraybuffer) {
-                // console.debug(`FILE: console.debug(url); BYTE_LEN: ${arraybuffer.byteLength}; RESPONSE MESSAGE:`);
-                // console.debug(response);
-                var gz = new Uint8Array(arraybuffer);
-                callback(null, gz.buffer);
+            response.arrayBuffer().then((arraybuffer) => {
+                console.debug(`FILE: console.debug(url); BYTE_LEN: ${arraybuffer.byteLength}; RESPONSE MESSAGE:`);
+                console.debug(response);
+                callback(null, arraybuffer);
             });
-            }).catch(function (exception) {
-                callback(exception, null);
+        }).catch((fetch_e) => {
+            callback(fetch_e, null);
         });
     }
 }
+
 export default BrowserDictionaryLoader;
+
+// function fetchAndDecompress(url) {
+//   return new Promise((resolve, reject) => {
+//     fetch(url).then((rsp) => {
+//       if (!rsp.ok) {
+//         reject(rsp.statusText);
+//       }
+//       decompressFileInResponse(rsp).then((gz) => resolve(gz)).catch((e) => reject(e));
+//     }).catch((e) => {
+//       reject(e);
+//     });
+//   })
+// }
+
+// function decompressFileInResponse(response) {
+//   return new Promise((resolve, reject) => {
+//     response.arrayBuffer().then((ab) => {
+//       console.debug(`FILE: console.debug(url); RESPONSE MESSAGE:`);
+//       console.debug(response);
+//       console.log(ab);
+//       resolve(ab);
+//       // decompressBuffer(ab).then((gz) => resolve(gz)).catch((e) => reject(e));
+//     }).catch((e) => {
+//       reject(e);
+//     });
+//   })
+// }
+
+// function decompressBuffer(arrayBuffer) {
+//   return new Promise((resolve, reject) => {
+//     gunzipSync(arrayBuffer).then((gz) => {
+//         resolve(gz);
+//     }).catch((e) => {
+//         reject(e);
+//     });
+//   })
+// }

@@ -47,7 +47,7 @@ class DictionaryLoader {
         async.parallel([
             // Trie
             function (callback) {
-                async.map(["base.dat", "check.dat"], function (filename, _callback) {
+                async.map(["base.dat.br", "check.dat.br"], function (filename, _callback) {
                     loadArrayBuffer(dic_path_url(filename), function (err, buffer) {
                         if (err) {
                             return _callback(err);
@@ -66,7 +66,7 @@ class DictionaryLoader {
             },
             // Token info dictionaries
             function (callback) {
-                async.map(["tid.dat", "tid_pos.dat", "tid_map.dat"], function (filename, _callback) {
+                async.map(["tid.dat.br", "tid_pos.dat.br", "tid_map.dat.br"], function (filename, _callback) {
                     loadArrayBuffer(dic_path_url(filename), function (err, buffer) {
                         if (err) {
                             return _callback(err);
@@ -86,7 +86,7 @@ class DictionaryLoader {
             },
             // Connection cost matrix
             function (callback) {
-                loadArrayBuffer(dic_path_url("cc.dat"), function (err, buffer) {
+                loadArrayBuffer(dic_path_url("cc.dat.br"), function (err, buffer) {
                     if (err) {
                         return callback(err);
                     }
@@ -97,7 +97,7 @@ class DictionaryLoader {
             },
             // Unknown dictionaries
             function (callback) {
-                async.map(["unk.dat", "unk_pos.dat", "unk_map.dat", "unk_char.dat", "unk_compat.dat", "unk_invoke.dat"], function (filename, _callback) {
+                async.map(["unk.dat.br", "unk_pos.dat.br", "unk_map.dat.br", "unk_char.dat.br", "unk_compat.dat.br", "unk_invoke.dat.br"], function (filename, _callback) {
                     loadArrayBuffer(dic_path_url(filename), function (err, buffer) {
                         if (err) {
                             return _callback(err);
