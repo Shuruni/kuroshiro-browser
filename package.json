@@ -1,8 +1,17 @@
 {
-  "name": "kuroshiro-browser",
+  "name": "kuroshiro-browser-kuromoji",
+  "type": "module",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/kuroshiro-browser-kuromoji.cjs",
+  "module": "./dist/kuroshiro-browser-kuromoji.js",
+  "exports": {
+    ".": {
+      "import": "./dist/kuroshiro-browser-kuromoji.js",
+      "require": "./dist/kuroshiro-browser-kuromoji.cjs"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -26,4 +26,4 @@ export function initKuroshiro() {
   })
 }
 
-export default getFurigana;
+export default Kuroshiro;
