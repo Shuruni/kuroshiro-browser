@@ -37,8 +37,7 @@ class BrowserDictionaryLoader extends DictionaryLoader {
                 callback(response.statusText, null);
             }
             response.arrayBuffer().then((arraybuffer) => {
-                console.debug(`FILE: console.debug(url); BYTE_LEN: ${arraybuffer.byteLength}; RESPONSE MESSAGE:`);
-                console.debug(response);
+                console.debug(`Successfully Loaded Kuromoji Dict: ${url}; \n De-compressed Size of Loaded Dict: ~${(arraybuffer.byteLength / 1024 / 1024).toFixed(1)} MB;`);
                 callback(null, arraybuffer);
             });
         }).catch((fetch_e) => {
