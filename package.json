@@ -6,12 +6,11 @@
   "homepage": "https://github.com/Shuruni/kuroshiro-browser",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Shuruni/kuroshiro-browser.git"
+    "url": "git+https://github.com/Shuruni/kuroshiro-browser.git"
   },
   "keywords": [
     "kuroshiro",
     "kuromoji",
-    
     "language",
     "Japanese",
     "kanji",
@@ -22,12 +21,10 @@
     "kana",
     "romaji",
     "hepburn",
-    
     "browser",
     "library",
     "utility",
     "tool",
-
     "convert",
     "converter",
     "analyzer",
@@ -39,7 +36,9 @@
     "nlp"
   ],
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/kuroshiro-browser.cjs",
   "module": "./dist/kuroshiro-browser.js",
   "exports": {
