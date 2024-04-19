@@ -5,7 +5,7 @@ import KuromojiAnalyzer from "../kuroshiro-analyzer-kuromoji/analyzer";
 export function getFurigana(kuroshiro, text, debug={...console, success:console.log}) {
   return new Promise((resolve, reject) => {
     kuroshiro.convert(text, { to: "hiragana", mode: "furigana"}).then((result) => {
-      debug.debug(result);
+      debug.success(`Furigana Added to Message:\n${result}`);
       resolve(result);
     }).catch((e) => {
       debug.error(`failed to get furigana: ${e}`);

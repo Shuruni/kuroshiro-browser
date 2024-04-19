@@ -1,5 +1,13 @@
-import async from "async";
+// import async from "async";
 import DynamicDictionaries from "../dict/DynamicDictionaries.js";
+
+// import baseDatURL from '/dict/base.dat.br?url';
+
+const CUR_DIR_NAME = import.meta.url.split('/').at(-2)
+const IS_MODULE = CUR_DIR_NAME != 'loader'
+const IS_PROD = import.meta.env.MODE == 'production'
+console.info(`Kuromoji is being loaded as a ${IS_MODULE?"Package/Library.":"Standalone Application.\nDictionary File paths will be adjusted once built and Loaded as a Package/Library"}`)
+
 /*
  * Copyright 2014 Takuya Asano
  * Copyright 2010-2014 Atilika Inc. and contributors
@@ -23,105 +31,98 @@ import DynamicDictionaries from "../dict/DynamicDictionaries.js";
  * @constructor
  */
 class DictionaryLoader {
-    constructor(dic_path) {
+    constructor() {
         this.dic = new DynamicDictionaries();
-        this.dic_path = dic_path;
     }
-    loadArrayBuffer(file, callback) {
-        throw new Error("DictionaryLoader#loadArrayBuffer should be overwrite");
+    static getActualDictlUrl(baseUrl, isProd) {
+        let trueUrl = IS_MODULE ? isProd?`.${baseUrl}`:`./node_modules/kuroshiro-browser-kuromoji/dist${baseUrl}` : `../../..${baseUrl}`;
+        // console.debug(import.meta.env.MODE)
+        // console.debug(trueUrl);
+        return trueUrl
     }
+    static dictURLs = null
+    static getDictUrls() { return DictionaryLoader.dictURLs }
+    static generateDictUrls(isProd) {
+        DictionaryLoader.dictURLs = {
+            trie: {
+                base_buffer: DictionaryLoader.getActualDictlUrl("/dict/base.dat.br", isProd),
+                check_buffer: DictionaryLoader.getActualDictlUrl("/dict/check.dat.br", isProd)
+            },
+            tokenInfo: {
+                token_info_buffer: DictionaryLoader.getActualDictlUrl("/dict/tid.dat.br", isProd), 
+                pos_buffer: DictionaryLoader.getActualDictlUrl("/dict/tid_pos.dat.br", isProd), 
+                target_map_buffer: DictionaryLoader.getActualDictlUrl("/dict/tid_map.dat.br", isProd)
+            },
+            connectionCost: {
+                cc_buffer: DictionaryLoader.getActualDictlUrl("/dict/cc.dat.br", isProd)
+            },
+            unknown: {
+                unk_buffer: DictionaryLoader.getActualDictlUrl("/dict/unk.dat.br", isProd), 
+                unk_pos_buffer: DictionaryLoader.getActualDictlUrl("/dict/unk_pos.dat.br", isProd), 
+                unk_map_buffer: DictionaryLoader.getActualDictlUrl("/dict/unk_map.dat.br", isProd), 
+                cat_map_buffer: DictionaryLoader.getActualDictlUrl("/dict/unk_char.dat.br", isProd), 
+                compat_cat_map_buffer: DictionaryLoader.getActualDictlUrl("/dict/unk_compat.dat.br", isProd), 
+                invoke_def_buffer: DictionaryLoader.getActualDictlUrl("/dict/unk_invoke.dat.br", isProd)
+            }
+          }
+    }
+    static loadArrayBuffer(url) {
+        return new Promise((resolve, reject) => {
+            fetch(url).then((response) => {
+                // console.info(`URL: ${url}`)
+                if (!response.ok || response.headers.get("Content-Type") == 'text/html') reject(response.statusText);
+                else {
+                    // console.debug(`Loaded ${url}`);
+                    // console.debug(response);
+                    response.arrayBuffer().then((arraybuffer) => resolve(arraybuffer)).catch((e) => console.warn(e));
+                }
+            }).catch((e) => {
+                console.warn(e)
+                reject(e);
+            });
+        });
+    }
+    static loadDictCategoryBuffers(dictCategory) {
+        const entries = Object.entries(dictCategory);
+        const promises = entries.map(([k, dictInfo]) => DictionaryLoader.loadArrayBuffer(dictInfo))
+        return Promise.all(promises)
+    }
+    static loadAllDictUrls() {
+        const entries = Object.entries(DictionaryLoader.dictURLs);
+        const promises = entries.map(([k,v]) => DictionaryLoader.loadDictCategoryBuffers(v));
+        return Promise.all(promises);
+    }
+
     /**
      * Load dictionary files
      * @param {DictionaryLoader~onLoad} load_callback Callback function called after loaded
      */
     load(load_callback) {
         var dic = this.dic;
-        var dic_path = this.dic_path;
-        var loadArrayBuffer = this.loadArrayBuffer;
-        var dic_path_url = function (filename) {
-            var separator = '/';
-            var replace = new RegExp(separator + '{1,}', 'g');
-            var path = [dic_path, filename].join(separator).replace(replace, separator);
-            return path;
-        };
-        async.parallel([
-            // Trie
-            function (callback) {
-                async.map(["base.dat.br", "check.dat.br"], function (filename, _callback) {
-                    loadArrayBuffer(dic_path_url(filename), function (err, buffer) {
-                        if (err) {
-                            return _callback(err);
-                        }
-                        _callback(null, buffer);
-                    });
-                }, function (err, buffers) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    var base_buffer = new Int32Array(buffers[0]);
-                    var check_buffer = new Int32Array(buffers[1]);
-                    dic.loadTrie(base_buffer, check_buffer);
-                    callback(null);
-                });
-            },
-            // Token info dictionaries
-            function (callback) {
-                async.map(["tid.dat.br", "tid_pos.dat.br", "tid_map.dat.br"], function (filename, _callback) {
-                    loadArrayBuffer(dic_path_url(filename), function (err, buffer) {
-                        if (err) {
-                            return _callback(err);
-                        }
-                        _callback(null, buffer);
-                    });
-                }, function (err, buffers) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    var token_info_buffer = new Uint8Array(buffers[0]);
-                    var pos_buffer = new Uint8Array(buffers[1]);
-                    var target_map_buffer = new Uint8Array(buffers[2]);
-                    dic.loadTokenInfoDictionaries(token_info_buffer, pos_buffer, target_map_buffer);
-                    callback(null);
-                });
-            },
-            // Connection cost matrix
-            function (callback) {
-                loadArrayBuffer(dic_path_url("cc.dat.br"), function (err, buffer) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    var cc_buffer = new Int16Array(buffer);
-                    dic.loadConnectionCosts(cc_buffer);
-                    callback(null);
-                });
-            },
-            // Unknown dictionaries
-            function (callback) {
-                async.map(["unk.dat.br", "unk_pos.dat.br", "unk_map.dat.br", "unk_char.dat.br", "unk_compat.dat.br", "unk_invoke.dat.br"], function (filename, _callback) {
-                    loadArrayBuffer(dic_path_url(filename), function (err, buffer) {
-                        if (err) {
-                            return _callback(err);
-                        }
-                        _callback(null, buffer);
-                    });
-                }, function (err, buffers) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    var unk_buffer = new Uint8Array(buffers[0]);
-                    var unk_pos_buffer = new Uint8Array(buffers[1]);
-                    var unk_map_buffer = new Uint8Array(buffers[2]);
-                    var cat_map_buffer = new Uint8Array(buffers[3]);
-                    var compat_cat_map_buffer = new Uint32Array(buffers[4]);
-                    var invoke_def_buffer = new Uint8Array(buffers[5]);
-                    dic.loadUnknownDictionaries(unk_buffer, unk_pos_buffer, unk_map_buffer, cat_map_buffer, compat_cat_map_buffer, invoke_def_buffer);
-                    // dic.loadUnknownDictionaries(char_buffer, unk_buffer);
-                    callback(null);
-                });
+        // console.debug(DictionaryLoader.dictURLs);
+        if (!DictionaryLoader.dictURLs) DictionaryLoader.generateDictUrls(IS_PROD);
+        // console.debug(`meta URL in Package: ${import.meta.url}`);
+        // console.log(`MODE in Package: ${import.meta.env.MODE}`)
+        // console.log(`BASE_URL in Package: ${import.meta.env.BASE_URL}`)
+
+        DictionaryLoader.loadAllDictUrls().then((results) => {
+            // console.debug(results);
+            let buffers = {
+                trie: results[0],
+                tokenInfo: results[1],
+                connectionCost: results[2],
+                unknown: results[3]
             }
-        ], function (err) {
-            load_callback(err, dic);
-        });
+            // console.debug(buffers);
+            dic.loadTrie(...buffers.trie);
+            dic.loadTokenInfoDictionaries(...buffers.tokenInfo);
+            dic.loadConnectionCosts(...buffers.connectionCost);
+            dic.loadUnknownDictionaries(...buffers.unknown);
+            load_callback(null, dic)
+        }).catch((e) => {
+            console.error("Failed to Load Dicts!")
+            load_callback(e, dic)
+        })
     }
 }
 export default DictionaryLoader;

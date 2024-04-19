@@ -7,17 +7,10 @@ class Analyzer {
     /**
      * Constructor
      * @param {Object} [options] JSON object which have key-value pairs settings
-     * @param {string} [options.dictPath] Path of the dictionary files
+     * @param {string} [options.dictUrls] Path of the dictionary files
      */
-    constructor({ dictPath } = {}) {
+    constructor() {
         this._analyzer = null;
-
-        if (!dictPath) {
-            this._dictPath = "/dict/";
-        }
-        else {
-            this._dictPath = dictPath;
-        }
     }
 
     /**
@@ -28,7 +21,7 @@ class Analyzer {
         return new Promise((resolve, reject) => {
             const self = this;
             if (this._analyzer == null) {
-                kuromoji.builder({ dicPath: this._dictPath }).build((err, newAnalyzer) => {
+                kuromoji.builder().build((err, newAnalyzer) => {
                     if (err) {
                         return reject(err);
                     }

@@ -1,5 +1,5 @@
 import Tokenizer from "./Tokenizer.js";
-import DictionaryLoader from "./loader/BrowserDictionaryLoader.js";
+import DictionaryLoader from "./loader/DictionaryLoader.js";
 /*
  * Copyright 2014 Takuya Asano
  * Copyright 2010-2014 Atilika Inc. and contributors
@@ -24,20 +24,14 @@ import DictionaryLoader from "./loader/BrowserDictionaryLoader.js";
  * @constructor
  */
 class TokenizerBuilder {
-    constructor(option) {
-        if (option.dicPath == null) {
-            this.dic_path = "dict/";
-        }
-        else {
-            this.dic_path = option.dicPath;
-        }
+    constructor() {
     }
     /**
      * Build Tokenizer instance by asynchronous manner
      * @param {TokenizerBuilder~onLoad} callback Callback function
      */
     build(callback) {
-        var loader = new DictionaryLoader(this.dic_path);
+        var loader = new DictionaryLoader();
         loader.load(function (err, dic) {
             callback(err, new Tokenizer(dic));
         });

@@ -19,8 +19,8 @@ import DictionaryBuilder from "./dict/builder/DictionaryBuilder.js";
 "use strict";
 // Public methods
 var kuromoji = {
-    builder: function (option) {
-        return new TokenizerBuilder(option);
+    builder: function () {
+        return new TokenizerBuilder();
     },
     dictionaryBuilder: function () {
         return new DictionaryBuilder();

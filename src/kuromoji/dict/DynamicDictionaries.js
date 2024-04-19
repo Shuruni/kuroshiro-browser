@@ -59,21 +59,37 @@ class DynamicDictionaries {
     }
     // from base.dat & check.dat
     loadTrie(base_buffer, check_buffer) {
-        this.trie = doublearray.load(base_buffer, check_buffer);
+        this.trie = doublearray.load(new Int32Array(base_buffer), new Int32Array(check_buffer));
+        console.debug(`Successfully Loaded Kuromoji Trie Dict Files! \nDe-compressed Size of Loaded Dicts: 
+            base: ~${(base_buffer.byteLength / 1024 / 1024).toFixed(1)} MB
+            check: ~${(check_buffer.byteLength / 1024 / 1024).toFixed(1)} MB`);
         return this;
     }
     loadTokenInfoDictionaries(token_info_buffer, pos_buffer, target_map_buffer) {
-        this.token_info_dictionary.loadDictionary(token_info_buffer);
-        this.token_info_dictionary.loadPosVector(pos_buffer);
-        this.token_info_dictionary.loadTargetMap(target_map_buffer);
+        this.token_info_dictionary.loadDictionary(new Uint8Array(token_info_buffer));
+        this.token_info_dictionary.loadPosVector(new Uint8Array(pos_buffer));
+        this.token_info_dictionary.loadTargetMap(new Uint8Array(target_map_buffer));
+        console.debug(`Successfully Loaded Kuromoji Token Info Dict Files! \nDe-compressed Size of Loaded Dict Files: 
+            token_info: ~${(token_info_buffer.byteLength / 1024 / 1024).toFixed(1)} MB
+            pos: ~${(pos_buffer.byteLength / 1024 / 1024).toFixed(1)} MB
+            target_map: ~${(target_map_buffer.byteLength / 1024 / 1024).toFixed(1)} MB`);
         return this;
     }
     loadConnectionCosts(cc_buffer) {
-        this.connection_costs.loadConnectionCosts(cc_buffer);
+        this.connection_costs.loadConnectionCosts(new Int16Array(cc_buffer));
+        console.debug(`Successfully Loaded Kuromoji Connection Cost Dict Files! \nDe-compressed Size of Loaded Dict Files: 
+            cc: ~${(cc_buffer.byteLength / 1024 / 1024).toFixed(1)} MB`);
         return this;
     }
     loadUnknownDictionaries(unk_buffer, unk_pos_buffer, unk_map_buffer, cat_map_buffer, compat_cat_map_buffer, invoke_def_buffer) {
-        this.unknown_dictionary.loadUnknownDictionaries(unk_buffer, unk_pos_buffer, unk_map_buffer, cat_map_buffer, compat_cat_map_buffer, invoke_def_buffer);
+        this.unknown_dictionary.loadUnknownDictionaries(new Uint8Array(unk_buffer), new Uint8Array(unk_pos_buffer), new Uint8Array(unk_map_buffer), new Uint8Array(cat_map_buffer), new Uint32Array(compat_cat_map_buffer), new Uint8Array(invoke_def_buffer));
+        console.debug(`Successfully Loaded Kuromoji Unknown Dict Files! \nDe-compressed Size of Loaded Dict Files: 
+            unk: ~${(unk_buffer.byteLength / 1024 / 1024).toFixed(1)} MB
+            unk_pos: ~${(unk_pos_buffer.byteLength / 1024 / 1024).toFixed(1)} MB
+            unk_map: ~${(unk_map_buffer.byteLength / 1024 / 1024).toFixed(1)} MB
+            cat_map: ~${(cat_map_buffer.byteLength / 1024 / 1024).toFixed(1)} MB
+            compat_cat_map: ~${(compat_cat_map_buffer.byteLength / 1024 / 1024).toFixed(1)} MB
+            invoke_def: ~${(invoke_def_buffer.byteLength / 1024 / 1024).toFixed(1)} MB`);
         return this;
     }
 }

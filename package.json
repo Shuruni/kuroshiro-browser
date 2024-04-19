@@ -2,7 +2,7 @@
   "name": "kuroshiro-browser-kuromoji",
   "type": "module",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.3",
   "files": ["dist"],
   "main": "./dist/kuroshiro-browser-kuromoji.cjs",
   "module": "./dist/kuroshiro-browser-kuromoji.js",
