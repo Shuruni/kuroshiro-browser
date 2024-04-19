@@ -1,15 +1,51 @@
 {
-  "name": "kuroshiro-browser-kuromoji",
+  "name": "kuroshiro-browser",
+  "description": "Kuroshiro+Analyzer+Kuromoji Combined and Optimized for Browser Usage Only",
+  "version": "0.0.4",
+  "author": "shuruni",
+  "homepage": "https://github.com/Shuruni/kuroshiro-browser",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Shuruni/kuroshiro-browser.git"
+  },
+  "keywords": [
+    "kuroshiro",
+    "kuromoji",
+    
+    "language",
+    "Japanese",
+    "kanji",
+    "furigana",
+    "okurigana",
+    "hiragana",
+    "katakana",
+    "kana",
+    "romaji",
+    "hepburn",
+    
+    "browser",
+    "library",
+    "utility",
+    "tool",
+
+    "convert",
+    "converter",
+    "analyzer",
+    "morphological analyzer",
+    "morphology",
+    "tokenizer",
+    "pos tagger",
+    "pos",
+    "nlp"
+  ],
   "type": "module",
-  "private": true,
-  "version": "0.0.3",
   "files": ["dist"],
-  "main": "./dist/kuroshiro-browser-kuromoji.cjs",
-  "module": "./dist/kuroshiro-browser-kuromoji.js",
+  "main": "./dist/kuroshiro-browser.cjs",
+  "module": "./dist/kuroshiro-browser.js",
   "exports": {
     ".": {
-      "import": "./dist/kuroshiro-browser-kuromoji.js",
-      "require": "./dist/kuroshiro-browser-kuromoji.cjs"
+      "import": "./dist/kuroshiro-browser.js",
+      "require": "./dist/kuroshiro-browser.cjs"
     }
   },
   "scripts": {
@@ -18,7 +54,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "async": "^3.2.5",
     "doublearray": "0.0.2"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 import './style.css'
-import { getFurigana, initKuroshiro } from "./src/kuroshiro"
+import { default as Kuroshiro } from "./src/kuroshiro/core.js"
 
 
 // Setup the JavaScript for the Application...
@@ -16,10 +16,10 @@ function setupFurigana(formEl, inputEl, outputEl) {
   // setFurigana(outputEl, "<ruby>振仮名<rp>(</rp><rt>ふりがな</rt><rp>)</rp></ruby><ruby>追加<rp>(</rp><rt>ついか</rt><rp>)</rp></ruby><ruby>希望<rp>(</rp><rt>きぼう</rt><rp>)</rp></ruby>の<ruby>文章<rp>(</rp><rt>ぶんしょう</rt><rp>)</rp></ruby>を<ruby>入力<rp>(</rp><rt>にゅうりょく</rt><rp>)</rp></ruby>してください")
   setFurigana(outputEl, "Loading Kuroshiro Library... (~12.4MB)")
   
-  initKuroshiro().then((kuroshiro) => {
+  Kuroshiro.buildAndInitWithKuromoji().then((kuroshiro) => {
     formEl.addEventListener('submit', (e) => {
       e.preventDefault();
-      getFurigana(kuroshiro, sanitize(inputEl.value)).then((v) => setFurigana(outputEl, v), (r) => console.error(r));
+      kuroshiro.getFurigana(sanitize(inputEl.value)).then((v) => setFurigana(outputEl, v), (r) => console.error(r));
     })
     setFurigana(outputEl, "Welcome! Enter <ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby> to add <ruby>振仮名<rp>(</rp><rt>ふりがな</rt><rp>)</rp></ruby> to in the field below to get Started!")
   }).catch((e) => {

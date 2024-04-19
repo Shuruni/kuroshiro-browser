@@ -35,7 +35,7 @@ class DictionaryLoader {
         this.dic = new DynamicDictionaries();
     }
     static getActualDictlUrl(baseUrl, isProd) {
-        let trueUrl = IS_MODULE ? isProd?`.${baseUrl}`:`./node_modules/kuroshiro-browser-kuromoji/dist${baseUrl}` : `../../..${baseUrl}`;
+        let trueUrl = IS_MODULE ? isProd?`.${baseUrl}`:`./node_modules/kuroshiro-browser/dist${baseUrl}` : `../../..${baseUrl}`;
         // console.debug(import.meta.env.MODE)
         // console.debug(trueUrl);
         return trueUrl

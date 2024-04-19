@@ -6,6 +6,8 @@ import {
     toRawHiragana, toRawKatakana, toRawRomaji,
     kanaToHiragna, kanaToKatakana, kanaToRomaji
 } from "./util";
+import { default as KuromojiAnalyzer } from "../kuroshiro-analyzer-kuromoji/analyzer.js"
+import { default as DictionaryLoader } from "../kuromoji/loader/DictionaryLoader.js"
 
 const Util = {
     isHiragana,
@@ -42,7 +44,8 @@ class Kuroshiro {
      * @instance
      * @returns {Promise} Promise object represents the result of initialization
      */
-    async init(analyzer) {
+    async init(analyzer, IS_PROD = (import.meta.env.MODE == 'production')) {
+        DictionaryLoader.generateDictUrls(IS_PROD)
         if (!analyzer || typeof analyzer !== "object" || typeof analyzer.init !== "function" || typeof analyzer.parse !== "function") {
             throw new Error("Invalid initialization parameter.");
         }
@@ -53,6 +56,31 @@ class Kuroshiro {
         else {
             throw new Error("Kuroshiro has already been initialized.");
         }
+    }
+
+    // async init (analyzer) {
+    //     console.warn("Kuroshiro.init called without environment flag. \nAssuming Prod, though this will mean that dictionary links will be broken in dev. \nTo avoid this issue, please call Kuroshiro.init(analyzer, IS_PROD) indicating whether this is prod or not.")
+    // }
+
+    static buildAndInitWithKuromoji(IS_PROD) {
+        const kuroshiro = new Kuroshiro();
+        return new Promise((resolve, reject) => {
+          kuroshiro.init(new KuromojiAnalyzer(), IS_PROD)
+            .then(() => resolve(kuroshiro))
+            .catch(reject)
+        })
+      }
+
+    getFurigana(text, debug={...console, success:console.log}) {
+        return new Promise((resolve, reject) => {
+            this.convert(text, { to: "hiragana", mode: "furigana"}).then((result) => {
+                debug.success(`Furigana Added to Message:\n${result}`);
+                resolve(result);
+            }).catch((e) => {
+                debug.error(`failed to get furigana: ${e}`);
+                reject(e);
+            })
+        })
     }
 
     /**
