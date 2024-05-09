@@ -49,7 +49,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build-app": "vite build -c vite.app.config.js",
+    "build-lib": "vite build -c vite.lib.config.js",
     "preview": "vite preview"
   },
   "dependencies": {
