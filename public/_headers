@@ -1,0 +1,5 @@
+# Headers for use in the Cloudflare Pages Deployment of the WebApp.
+
+# Force the Content-Encoding Tag to be sent for the .br encoded dict files...
+/dict/*.dat.br
+  Content-Encoding: br
